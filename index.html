@@ -1,0 +1,2461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5ef">
+  <title>E-Bookie — Your reading corner</title>
+  <style>
+    :root {
+      --paper: #f7f5ef;
+      --white: #fffefa;
+      --ink: #24251f;
+      --muted: #85867c;
+      --line: #e8e5dc;
+      --green: #405c47;
+      --green-dark: #2e4635;
+      --lime: #d8e58b;
+      --shadow: 0 18px 45px #302a1710;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    .hidden { display: none !important; }
+
+    /* Login and signup */
+    .auth-page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .auth-art {
+      min-height: 100vh;
+      padding: 38px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      color: white;
+      background: var(--green);
+    }
+
+    .auth-art::before,
+    .auth-art::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .auth-art::before {
+      width: 530px;
+      height: 530px;
+      right: -210px;
+      bottom: -175px;
+      background: #ffffff0d;
+    }
+
+    .auth-art::after {
+      width: 310px;
+      height: 310px;
+      right: 50px;
+      bottom: -165px;
+      background: #d8e58b22;
+    }
+
+    .brand {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: inherit;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -.8px;
+    }
+
+    .brand-mark {
+      width: 33px;
+      height: 33px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px 11px 11px 4px;
+      color: var(--green-dark);
+      background: var(--lime);
+      font-family: Georgia, serif;
+      font-size: 21px;
+      font-weight: 700;
+    }
+
+    .art-copy {
+      position: relative;
+      z-index: 1;
+      max-width: 490px;
+      padding: 40px 0 75px;
+    }
+
+    .art-kicker {
+      margin-bottom: 17px;
+      color: var(--lime);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .art-copy h1 {
+      margin: 0 0 18px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(42px, 5vw, 72px);
+      font-weight: 400;
+      letter-spacing: -2px;
+      line-height: .99;
+    }
+
+    .art-copy p {
+      max-width: 385px;
+      margin: 0;
+      color: #e5ebe3;
+      font-size: 15px;
+      line-height: 1.75;
+    }
+
+    .book-stack {
+      position: absolute;
+      right: 12%;
+      bottom: 9%;
+      z-index: 1;
+      width: 195px;
+      height: 180px;
+      transform: rotate(-7deg);
+    }
+
+    .stack-book {
+      position: absolute;
+      width: 172px;
+      height: 40px;
+      border: 1px solid #ffffff44;
+      border-radius: 5px;
+      box-shadow: 0 10px 22px #142b1d38;
+    }
+
+    .stack-book:nth-child(1) { bottom: 4px; left: 10px; background: #d9a57d; transform: rotate(6deg); }
+    .stack-book:nth-child(2) { bottom: 42px; left: 1px; background: #c7d082; transform: rotate(-5deg); }
+    .stack-book:nth-child(3) { bottom: 81px; left: 16px; background: #d9d4e9; transform: rotate(3deg); }
+    .stack-book:nth-child(4) { bottom: 120px; left: 5px; background: #ecdfc1; transform: rotate(-4deg); }
+
+    .auth-art-footer {
+      position: relative;
+      z-index: 1;
+      color: #d5dfd3;
+      font-size: 12px;
+    }
+
+    .auth-panel {
+      display: grid;
+      place-items: center;
+      padding: 35px 24px;
+    }
+
+    .auth-card { width: min(100%, 430px); }
+    .auth-mobile-brand { display: none; }
+
+    .auth-card h2 {
+      margin: 0 0 9px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 38px;
+      font-weight: 400;
+      letter-spacing: -1px;
+    }
+
+    .auth-subtitle {
+      margin: 0 0 25px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+      margin-bottom: 21px;
+      padding: 5px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: #efede6;
+    }
+
+    .auth-tab {
+      padding: 10px;
+      border: 0;
+      border-radius: 8px;
+      color: var(--muted);
+      background: transparent;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .auth-tab.active {
+      color: var(--ink);
+      background: var(--white);
+      box-shadow: 0 2px 8px #0000000c;
+    }
+
+    .field { margin-bottom: 13px; }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      color: #51534a;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      min-height: 43px;
+      padding: 10px 12px;
+      border: 1px solid #dfddd4;
+      border-radius: 9px;
+      outline: none;
+      color: var(--ink);
+      background: var(--white);
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px #405c4714;
+    }
+
+    .field input:disabled,
+    .field select:disabled { background: #f1f0eb; }
+
+    .field-help {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .auth-form-scroll {
+      max-height: min(61vh, 620px);
+      overflow-y: auto;
+      padding: 2px 5px 2px 0;
+    }
+
+    .auth-submit,
+    .primary-button {
+      padding: 13px 16px;
+      border: 0;
+      border-radius: 9px;
+      color: white;
+      background: var(--green);
+      font-weight: 750;
+    }
+
+    .auth-submit { width: 100%; }
+    .auth-submit:hover, .primary-button:hover { background: var(--green-dark); }
+
+    .auth-error {
+      min-height: 18px;
+      margin: 3px 0 8px;
+      color: #aa443b;
+      font-size: 12px;
+    }
+
+    .auth-privacy {
+      margin: 15px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    /* App header and bookshelf */
+    .app-shell { min-height: 100vh; }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      height: 70px;
+      padding: 0 5.5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      background: #f7f5efed;
+      backdrop-filter: blur(12px);
+    }
+
+    .app-header .brand { color: var(--ink); }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .header-greeting {
+      margin-right: 3px;
+      color: #6f7168;
+      font-size: 13px;
+    }
+
+    .avatar {
+      width: 37px;
+      height: 37px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--green-dark);
+      background: var(--lime);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .logout-button {
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: #5e6057;
+      background: transparent;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .logout-button:hover { background: white; }
+
+    .app-main {
+      width: min(1150px, 89%);
+      margin: 0 auto;
+      padding: 40px 0 70px;
+    }
+
+    .hero {
+      min-height: 245px;
+      padding: 39px 45px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      border-radius: 19px;
+      color: white;
+      background: var(--green);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 265px;
+      height: 265px;
+      border-radius: 50%;
+      right: 7%;
+      top: -115px;
+      background: #ffffff0c;
+    }
+
+    .hero::after {
+      content: "“";
+      position: absolute;
+      right: 12%;
+      bottom: -109px;
+      color: var(--lime);
+      font-family: Georgia, serif;
+      font-size: 340px;
+      line-height: 1;
+      transform: rotate(180deg);
+      opacity: .95;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 540px;
+    }
+
+    .hero-kicker {
+      margin-bottom: 12px;
+      color: var(--lime);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      max-width: 520px;
+      margin: 0 0 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(34px, 5vw, 54px);
+      font-weight: 400;
+      letter-spacing: -1.8px;
+      line-height: 1.04;
+    }
+
+    .hero p { margin: 0; color: #e0e8de; font-size: 14px; }
+
+    .create-button {
+      position: absolute;
+      z-index: 2;
+      right: 40px;
+      bottom: 34px;
+      padding: 11px 15px;
+      border: 0;
+      border-radius: 8px;
+      color: var(--green-dark);
+      background: var(--lime);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .dashboard-tools {
+      margin-top: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .section-title h2 {
+      margin: 0 0 5px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 28px;
+      font-weight: 400;
+    }
+
+    .section-title p { margin: 0; color: var(--muted); font-size: 12px; }
+    .tool-controls { display: flex; gap: 9px; }
+
+    .search-input, .sort-select {
+      height: 40px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      outline: none;
+      color: #51534a;
+      background: var(--white);
+      font-size: 12px;
+    }
+
+    .search-input { width: 215px; }
+    .sort-select { min-width: 130px; }
+
+    .filter-row {
+      margin: 24px 0 19px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+    }
+
+    .filter-chip {
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 25px;
+      color: #696b61;
+      background: transparent;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .filter-chip.active {
+      border-color: var(--green);
+      color: white;
+      background: var(--green);
+    }
+
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 19px;
+    }
+
+    .book-card {
+      min-width: 0;
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--white);
+      box-shadow: 0 5px 17px #302a1707;
+      transition: transform .18s, box-shadow .18s;
+    }
+
+    .book-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+
+    .book-cover {
+      min-height: 204px;
+      padding: 13px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      border-radius: 8px;
+      color: white;
+      background: linear-gradient(145deg, #849c74, #405c47);
+    }
+
+    .book-cover::after {
+      content: "";
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      right: -62px;
+      bottom: -66px;
+      border: 1px solid #ffffff55;
+      border-radius: 50%;
+      box-shadow: 0 0 0 14px #ffffff0d, 0 0 0 29px #ffffff0d;
+    }
+
+    .book-cover.plum { background: linear-gradient(145deg, #b17b97, #60435f); }
+    .book-cover.ochre { background: linear-gradient(145deg, #d8a15f, #916239); }
+    .book-cover.blue { background: linear-gradient(145deg, #81a2af, #3c5b6a); }
+    .book-cover.rose { background: linear-gradient(145deg, #d99093, #804b5d); }
+    .book-cover.lilac { background: linear-gradient(145deg, #aaa2c4, #615b7e); }
+
+    .book-type {
+      z-index: 1;
+      align-self: flex-start;
+      padding: 5px 7px;
+      border: 1px solid #ffffff7a;
+      border-radius: 20px;
+      color: white;
+      font-size: 9px;
+      text-transform: uppercase;
+    }
+
+    .book-cover h3 {
+      z-index: 1;
+      max-width: 160px;
+      margin: auto 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      font-weight: 400;
+      line-height: 1.05;
+      overflow-wrap: anywhere;
+    }
+
+    .cover-author { z-index: 1; color: #ffffffdc; font-size: 10px; }
+    .book-details { padding: 12px 3px 2px; }
+
+    .book-details h4 { margin: 0 0 5px; font-size: 13px; font-weight: 750; }
+
+    .book-details p {
+      min-height: 31px;
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .book-card-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .genre-label { color: #85867c; font-size: 10px; }
+
+    .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 5px;
+    }
+
+    .read-button, .edit-book-button, .delete-book-button {
+      padding: 7px 9px;
+      border: 0;
+      border-radius: 7px;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .read-button, .edit-book-button {
+      color: var(--green-dark);
+      background: #e9eddd;
+    }
+
+    .delete-book-button {
+      border: 1px solid #ead5d1;
+      color: #9c3932;
+      background: #fff7f5;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 42px 22px;
+      border: 1px dashed #d8d5cb;
+      border-radius: 14px;
+      color: var(--muted);
+      text-align: center;
+      background: #fffefa88;
+    }
+
+    .empty-icon {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 14px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      color: var(--green-dark);
+      background: #e9eddd;
+      font-family: Georgia, serif;
+      font-size: 28px;
+    }
+
+    .empty-state h3 {
+      margin: 0 0 8px;
+      color: var(--ink);
+      font-family: Georgia, serif;
+      font-size: 23px;
+      font-weight: 400;
+    }
+
+    .empty-state p {
+      max-width: 390px;
+      margin: 0 auto 17px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .empty-create-button {
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 8px;
+      color: white;
+      background: var(--green);
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    /* Common dialogs and buttons */
+    dialog {
+      width: min(760px, calc(100% - 26px));
+      max-height: 92vh;
+      padding: 0;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      color: var(--ink);
+      background: var(--white);
+      box-shadow: 0 22px 80px #24251f35;
+    }
+
+    dialog::backdrop { background: #20231d88; backdrop-filter: blur(3px); }
+
+    .dialog-header {
+      padding: 17px 21px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: white;
+      background: var(--green);
+    }
+
+    .dialog-header h2 {
+      margin: 0;
+      font-family: Georgia, serif;
+      font-size: 21px;
+      font-weight: 400;
+    }
+
+    .close-button {
+      padding: 2px 6px;
+      border: 0;
+      color: white;
+      background: transparent;
+      font-size: 25px;
+    }
+
+    .dialog-body { padding: 21px; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .dialog-footer {
+      padding: 0 21px 21px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+    }
+
+    .dialog-footer .primary-button { width: auto; padding: 11px 16px; }
+
+    .secondary-button {
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: #62645a;
+      background: transparent;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* Full-page book details screen */
+    .book-details-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      overflow-y: auto;
+      background:
+        radial-gradient(circle at 85% 12%, #d8e58b38, transparent 25rem),
+        var(--paper);
+    }
+
+    .details-screen-header {
+      height: 70px;
+      padding: 0 5%;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      background: #f7f5efed;
+    }
+
+    .back-button {
+      justify-self: start;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: #55574e;
+      background: var(--white);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .details-screen-header .brand { color: var(--ink); }
+
+    .details-step {
+      justify-self: end;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+    }
+
+    .details-screen-main {
+      width: min(690px, 90%);
+      margin: 0 auto;
+      padding: clamp(38px, 8vh, 75px) 0 70px;
+    }
+
+    .details-intro { margin-bottom: 30px; }
+
+    .details-eyebrow {
+      margin: 0 0 9px;
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .details-intro h1 {
+      margin: 0 0 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(38px, 7vw, 56px);
+      font-weight: 400;
+      letter-spacing: -1.6px;
+    }
+
+    .details-intro > p:last-child {
+      max-width: 520px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .new-book-form {
+      padding: clamp(20px, 5vw, 34px);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+
+    .new-book-form textarea { resize: vertical; line-height: 1.6; }
+
+    .details-form-footer {
+      margin-top: 25px;
+      padding-top: 18px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .details-form-footer .primary-button { width: auto; }
+
+    /* Manuscript editor */
+    #manuscriptDialog { width: min(1100px, calc(100% - 24px)); }
+
+    .manuscript-topbar {
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--line);
+      background: #fbfaf6;
+    }
+
+    .manuscript-book-info { min-width: 0; }
+
+    .manuscript-book-info strong {
+      display: block;
+      overflow: hidden;
+      font-family: Georgia, serif;
+      font-size: 19px;
+      font-weight: 400;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .manuscript-book-info span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .manuscript-layout {
+      min-height: 530px;
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+    }
+
+    .chapter-sidebar {
+      padding: 18px 14px;
+      border-right: 1px solid var(--line);
+      background: #f8f7f2;
+    }
+
+    .chapter-sidebar-heading {
+      margin: 0 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .add-chapter-button {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--green-dark);
+      background: white;
+      font-size: 18px;
+    }
+
+    .chapter-list { display: grid; gap: 6px; }
+
+    .chapter-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .chapter-select {
+      min-width: 0;
+      padding: 10px;
+      overflow: hidden;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: #64665d;
+      background: transparent;
+      font-size: 12px;
+      text-align: left;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .chapter-row.active .chapter-select {
+      border-color: #dce3cb;
+      color: var(--green-dark);
+      background: #e9eddd;
+      font-weight: 750;
+    }
+
+    .chapter-actions { display: flex; gap: 1px; }
+
+    .chapter-action {
+      width: 25px;
+      height: 28px;
+      padding: 0;
+      border: 0;
+      border-radius: 5px;
+      color: #797a72;
+      background: transparent;
+      font-size: 12px;
+    }
+
+    .chapter-action:hover { background: #eae8df; color: var(--ink); }
+
+    .manuscript-editor {
+      min-width: 0;
+      padding: 30px clamp(20px, 5vw, 60px);
+    }
+
+    .editor-title {
+      width: 100%;
+      padding: 0 0 14px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      outline: none;
+      color: var(--ink);
+      background: transparent;
+      font-family: Georgia, serif;
+      font-size: 30px;
+    }
+
+    .editor-title:focus { border-color: var(--green); }
+
+    .editor-content {
+      width: 100%;
+      min-height: 360px;
+      margin-top: 20px;
+      padding: 0;
+      border: 0;
+      outline: none;
+      resize: vertical;
+      color: #414239;
+      background: transparent;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 17px;
+      line-height: 1.85;
+    }
+
+    .editor-status {
+      padding: 10px 20px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      background: #fbfaf6;
+      font-size: 11px;
+      text-align: right;
+    }
+
+    .reader-body {
+      max-height: 68vh;
+      padding: 27px clamp(20px, 7vw, 58px);
+      overflow-y: auto;
+    }
+
+    .reader-byline { margin: 0 0 20px; color: var(--muted); font-size: 12px; }
+
+    .reader-chapter-heading {
+      margin: 28px 0 10px;
+      font-family: Georgia, serif;
+      font-size: 22px;
+      font-weight: 400;
+    }
+
+    .reader-text {
+      color: #3d4037;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 17px;
+      line-height: 1.85;
+      white-space: pre-wrap;
+    }
+
+    /* Settings */
+    .settings-section {
+      padding: 0 0 18px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .settings-section h3 {
+      margin: 0 0 13px;
+      font-family: Georgia, serif;
+      font-size: 19px;
+      font-weight: 400;
+    }
+
+    .settings-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin: 10px 0;
+      color: #51534a;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .settings-check input { margin: 2px 0 0; accent-color: var(--green); }
+
+    .settings-note {
+      margin: 9px 0 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .danger-zone { border-bottom: 0; }
+    .danger-zone h3 { color: #a13f37; }
+
+    .danger-button {
+      padding: 10px 13px;
+      border: 1px solid #d9aaa5;
+      border-radius: 8px;
+      color: #9c3932;
+      background: #fff6f4;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .settings-message {
+      min-height: 18px;
+      margin: 0;
+      color: #a13f37;
+      font-size: 12px;
+    }
+
+    /* Tutorial and toast */
+    .tutorial-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: #142019a8;
+      backdrop-filter: blur(3px);
+    }
+
+    .tutorial-card {
+      width: min(100%, 520px);
+      padding: 42px 32px 30px;
+      border: 1px solid #e7e5dc;
+      border-radius: 16px;
+      text-align: center;
+      background: var(--white);
+      box-shadow: 0 25px 80px #0003;
+    }
+
+    .tutorial-card h2 {
+      margin: 0 0 13px;
+      font-family: Georgia, serif;
+      font-size: clamp(27px, 5vw, 34px);
+      font-weight: 400;
+    }
+
+    .tutorial-card p {
+      min-height: 46px;
+      margin: 0 auto 23px;
+      color: #71736a;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .tutorial-progress {
+      margin-bottom: 22px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: .08em;
+    }
+
+    .tutorial-actions { display: flex; justify-content: center; gap: 10px; }
+
+    .tutorial-next {
+      min-width: 160px;
+      padding: 14px 22px;
+      border: 0;
+      border-radius: 30px;
+      color: white;
+      background: var(--green);
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .tutorial-skip {
+      padding: 12px 16px;
+      border: 0;
+      color: var(--muted);
+      background: transparent;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tutorial-focus {
+      position: relative;
+      z-index: 101;
+      outline: 4px solid var(--lime) !important;
+      outline-offset: 5px;
+      border-radius: 12px;
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 120;
+      padding: 12px 16px;
+      border-radius: 9px;
+      color: white;
+      background: var(--green-dark);
+      box-shadow: var(--shadow);
+      font-size: 13px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: .2s;
+      pointer-events: none;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 900px) {
+      .book-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 680px) {
+      .auth-page { grid-template-columns: 1fr; }
+      .auth-art { display: none; }
+      .auth-panel { min-height: 100vh; padding: 25px 20px; }
+      .auth-mobile-brand { display: inline-flex; margin-bottom: 26px; color: var(--ink); }
+
+      .app-header { height: 62px; padding: 0 5%; }
+      .header-greeting { display: none; }
+      .app-main { width: 90%; padding-top: 24px; }
+      .hero { min-height: 245px; padding: 30px 25px; }
+      .hero h1 { max-width: 370px; font-size: 42px; }
+      .create-button { right: 18px; bottom: 17px; }
+      .dashboard-tools { align-items: flex-start; flex-direction: column; }
+      .tool-controls { width: 100%; }
+      .search-input { flex: 1; min-width: 0; }
+      .book-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .book-cover { min-height: 190px; }
+
+      .manuscript-layout { grid-template-columns: 1fr; }
+      .chapter-sidebar {
+        padding: 12px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .chapter-list { display: flex; overflow-x: auto; }
+      .chapter-row { flex: 0 0 auto; }
+      .chapter-actions { display: none; }
+      .manuscript-editor { padding: 24px 20px; }
+      .editor-content { min-height: 300px; }
+      .details-screen-header { grid-template-columns: 1fr auto; }
+      .details-screen-header .brand { display: none; }
+      .details-step { grid-column: 2; grid-row: 1; }
+      .details-form-footer { flex-direction: column-reverse; }
+      .details-form-footer button { width: 100% !important; }
+    }
+
+    @media (max-width: 390px) {
+      .book-grid { grid-template-columns: 1fr; }
+      .book-cover { min-height: 225px; }
+      .form-grid { grid-template-columns: 1fr; gap: 0; }
+      .tutorial-card { padding: 34px 20px 24px; }
+      .tutorial-actions { flex-direction: column-reverse; }
+      .tutorial-next, .tutorial-skip { width: 100%; }
+      .header-actions { gap: 5px; }
+      .logout-button { padding: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login and signup screen -->
+  <section class="auth-page" id="authPage">
+    <div class="auth-art">
+      <div class="brand"><span class="brand-mark">e</span><span>E-Bookie</span></div>
+      <div class="art-copy">
+        <div class="art-kicker">A little space to get lost</div>
+        <h1>Find a story<br>that feels like yours.</h1>
+        <p>Create your own reading corner. Write stories, build your bookshelf, and keep your creative world in one place.</p>
+      </div>
+      <div class="book-stack" aria-hidden="true">
+        <div class="stack-book"></div><div class="stack-book"></div>
+        <div class="stack-book"></div><div class="stack-book"></div>
+      </div>
+      <div class="auth-art-footer">Your stories. Your shelf. Your space.</div>
+    </div>
+
+    <div class="auth-panel">
+      <div class="auth-card">
+        <div class="brand auth-mobile-brand">
+          <span class="brand-mark">e</span><span>E-Bookie</span>
+        </div>
+
+        <h2 id="authHeading">Welcome back</h2>
+        <p class="auth-subtitle" id="authSubtitle">Log in to return to your bookshelf.</p>
+
+        <div class="auth-tabs" role="tablist" aria-label="Account">
+          <button class="auth-tab active" id="loginTab" type="button">Log in</button>
+          <button class="auth-tab" id="signupTab" type="button">Sign up</button>
+        </div>
+
+        <form id="authForm" novalidate>
+          <div class="auth-form-scroll">
+            <div class="field hidden" id="legalNameField">
+              <label for="legalName">Full legal name</label>
+              <input id="legalName" type="text" maxlength="100"
+                     autocomplete="name" placeholder="Your full legal name" disabled>
+            </div>
+
+            <div class="field hidden" id="penNameField">
+              <label for="penName">Author pen name</label>
+              <input id="penName" type="text" maxlength="50"
+                     placeholder="Choose your permanent pen name" disabled>
+              <small class="field-help">Your pen name cannot be changed after signup.</small>
+            </div>
+
+            <div class="field">
+              <label for="authEmail">Email address</label>
+              <input id="authEmail" type="email" autocomplete="email"
+                     placeholder="you@example.com">
+            </div>
+
+            <div class="field hidden" id="handleField">
+              <label for="handle">Handle</label>
+              <input id="handle" type="text" maxlength="24"
+                     pattern="[A-Za-z0-9_]{3,24}"
+                     placeholder="3–24 letters, numbers, or underscores" disabled>
+              <small class="field-help">Your handle must be unique.</small>
+            </div>
+
+            <div class="form-grid hidden" id="birthFields">
+              <div class="field">
+                <label for="age">Age (18+)</label>
+                <input id="age" type="number" min="18" max="120"
+                       inputmode="numeric" placeholder="18 or older" disabled>
+              </div>
+              <div class="field">
+                <label for="birthday">Birthday</label>
+                <input id="birthday" type="date" disabled>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="authPassword">Password</label>
+              <input id="authPassword" type="password"
+                     autocomplete="current-password"
+                     placeholder="At least 6 characters">
+            </div>
+
+            <div class="field hidden" id="securityQuestionField">
+              <label for="securityQuestion">Security question</label>
+              <select id="securityQuestion" disabled>
+                <option value="">Choose a question</option>
+                <option value="first-pet">What was the name of your first pet?</option>
+                <option value="birth-city">In what city were you born?</option>
+                <option value="childhood-nickname">What was your childhood nickname?</option>
+                <option value="first-book">What was the first book you loved?</option>
+              </select>
+            </div>
+
+            <div class="field hidden" id="securityAnswerField">
+              <label for="securityAnswer">Security answer</label>
+              <input id="securityAnswer" type="password" maxlength="100"
+                     autocomplete="off" placeholder="Enter your answer" disabled>
+            </div>
+          </div>
+
+          <p class="auth-error" id="authError" aria-live="polite"></p>
+          <button class="auth-submit" id="authSubmit" type="submit">Log in</button>
+        </form>
+
+        <p class="auth-privacy">
+          Demo only: account details and books are stored in this browser.
+          Avoid entering real sensitive information.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bookshelf -->
+  <div class="app-shell hidden" id="appShell">
+    <header class="app-header">
+      <div class="brand"><span class="brand-mark">e</span><span>E-Bookie</span></div>
+      <div class="header-actions">
+        <span class="header-greeting" id="headerGreeting"></span>
+        <div class="avatar" id="userAvatar" aria-label="User profile"></div>
+        <button class="logout-button" id="settingsButton" type="button">Settings</button>
+        <button class="logout-button" id="logoutButton" type="button">Log out</button>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <section class="hero">
+        <div class="hero-content">
+          <div class="hero-kicker">Your personal writing space</div>
+          <h1>Build a world from your words.</h1>
+          <p>Your bookshelf starts empty. Add a book, then write it chapter by chapter.</p>
+        </div>
+        <button class="create-button" id="createButton" type="button">＋ Create a book</button>
+      </section>
+
+      <section class="dashboard-tools">
+        <div class="section-title">
+          <h2 id="sectionHeading">Your bookshelf</h2>
+          <p id="bookCount">Your books will appear here.</p>
+        </div>
+        <div class="tool-controls">
+          <input class="search-input" id="searchInput" type="search"
+                 placeholder="Search your books…" aria-label="Search your books">
+          <select class="sort-select" id="sortSelect" aria-label="Sort books">
+            <option value="newest">Newest first</option>
+            <option value="title">Title A–Z</option>
+            <option value="author">Author A–Z</option>
+          </select>
+        </div>
+      </section>
+
+      <nav class="filter-row" aria-label="Filter your books">
+        <button class="filter-chip active" data-filter="all" type="button">All books</button>
+        <button class="filter-chip" data-filter="UGC" type="button">Original writing</button>
+        <button class="filter-chip" data-filter="Real" type="button">Reading journals</button>
+        <button class="filter-chip" data-filter="mine" type="button">My writing</button>
+      </nav>
+
+      <section class="book-grid" id="bookGrid" aria-live="polite"></section>
+    </main>
+  </div>
+
+  <!-- New full-page book details screen -->
+  <section id="bookDetailsScreen" class="book-details-screen hidden">
+    <header class="details-screen-header">
+      <button class="back-button" id="cancelBookDetails" type="button">← Back to bookshelf</button>
+      <div class="brand"><span class="brand-mark">e</span><span>E-Bookie</span></div>
+      <span class="details-step">STEP 1 OF 2</span>
+    </header>
+
+    <main class="details-screen-main">
+      <div class="details-intro">
+        <p class="details-eyebrow">A new story begins</p>
+        <h1>Set up your book.</h1>
+        <p>Start with the details. Next, you’ll get a manuscript editor to write and organize chapters.</p>
+      </div>
+
+      <form id="newBookDetailsForm" class="new-book-form">
+        <div class="field">
+          <label for="newBookTitle">Book title <span aria-hidden="true">*</span></label>
+          <input id="newBookTitle" name="title" required maxlength="70"
+                 placeholder="Give your book a title">
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="newBookGenre">Genre</label>
+            <input id="newBookGenre" name="genre" maxlength="40"
+                   placeholder="Fantasy, memoir, romance…">
+          </div>
+          <div class="field">
+            <label for="newBookType">Book type</label>
+            <select id="newBookType" name="type">
+              <option value="UGC">Original writing</option>
+              <option value="Real">Reading journal / book notes</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="newBookDescription">Description</label>
+          <textarea id="newBookDescription" name="description" maxlength="300"
+                    rows="4" placeholder="What is your book about?"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="newBookNotes">Private planning notes</label>
+          <textarea id="newBookNotes" name="notes" maxlength="1000"
+                    rows="3" placeholder="Ideas, goals, characters, or anything to remember"></textarea>
+          <small class="field-help">These notes are only for your own writing space.</small>
+        </div>
+
+        <div class="details-form-footer">
+          <button class="secondary-button" id="cancelBookDetailsBottom" type="button">Cancel</button>
+          <button class="primary-button" type="submit">Continue to manuscript →</button>
+        </div>
+      </form>
+    </main>
+  </section>
+
+  <!-- Manuscript editor -->
+  <dialog id="manuscriptDialog">
+    <div class="dialog-header">
+      <h2>Write your manuscript</h2>
+      <button class="close-button" type="button" id="closeManuscriptButton" aria-label="Close">×</button>
+    </div>
+
+    <div class="manuscript-topbar">
+      <div class="manuscript-book-info">
+        <strong id="manuscriptBookTitle"></strong>
+        <span id="manuscriptBookMeta"></span>
+      </div>
+      <button class="secondary-button" id="saveManuscriptButton" type="button">Save</button>
+    </div>
+
+    <div class="manuscript-layout">
+      <aside class="chapter-sidebar">
+        <div class="chapter-sidebar-heading">
+          <span>Chapters</span>
+          <button class="add-chapter-button" id="addChapterButton"
+                  type="button" aria-label="Add chapter" title="Add chapter">+</button>
+        </div>
+        <div class="chapter-list" id="chapterList"></div>
+      </aside>
+
+      <section class="manuscript-editor">
+        <input class="editor-title" id="chapterTitleInput"
+               aria-label="Chapter title" maxlength="100" placeholder="Chapter title">
+        <textarea class="editor-content" id="chapterContentInput"
+                  aria-label="Chapter manuscript"
+                  placeholder="Start writing your chapter here…"></textarea>
+      </section>
+    </div>
+
+    <div class="editor-status" id="editorStatus">Saved in this browser</div>
+  </dialog>
+
+  <!-- Read book dialog -->
+  <dialog id="readerDialog">
+    <div class="dialog-header">
+      <h2 id="readerTitle">Reading</h2>
+      <button class="close-button" type="button" data-close="readerDialog" aria-label="Close">×</button>
+    </div>
+    <article class="reader-body">
+      <p class="reader-byline" id="readerByline"></p>
+      <div id="readerChapters"></div>
+    </article>
+  </dialog>
+
+  <!-- Settings dialog -->
+  <dialog id="settingsDialog">
+    <div class="dialog-header">
+      <h2>Settings</h2>
+      <button class="close-button" type="button" data-close="settingsDialog"
+              aria-label="Close settings">×</button>
+    </div>
+
+    <form id="settingsForm">
+      <div class="dialog-body">
+        <section class="settings-section">
+          <h3>Profile</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label for="settingsDisplayName">Author pen name</label>
+              <input id="settingsDisplayName" type="text" maxlength="50">
+            </div>
+            <div class="field">
+              <label for="settingsEmail">Email address</label>
+              <input id="settingsEmail" type="email">
+            </div>
+          </div>
+          <div class="field">
+            <label for="settingsBio">About you</label>
+            <textarea id="settingsBio" maxlength="250" rows="3"
+                      placeholder="A short author bio"></textarea>
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h3>Reading and writing</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label for="settingsTheme">Appearance</label>
+              <select id="settingsTheme">
+                <option value="paper">Warm paper</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="settingsFontSize">Manuscript text size</label>
+              <select id="settingsFontSize">
+                <option value="15">Small</option>
+                <option value="17">Medium</option>
+                <option value="20">Large</option>
+                <option value="23">Extra large</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="settingsDefaultSort">Bookshelf sort</label>
+              <select id="settingsDefaultSort">
+                <option value="newest">Newest first</option>
+                <option value="title">Title A–Z</option>
+                <option value="author">Author A–Z</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="settingsAutosave">Manuscript autosave</label>
+              <select id="settingsAutosave">
+                <option value="on">On</option>
+                <option value="off">Off — save manually</option>
+              </select>
+            </div>
+          </div>
+          <label class="settings-check">
+            <input id="settingsConfirmDeleteChapter" type="checkbox">
+            Ask before deleting a chapter
+          </label>
+        </section>
+
+        <section class="settings-section">
+          <h3>Preferences</h3>
+          <label class="settings-check">
+            <input id="settingsTutorial" type="checkbox">
+            Show the welcome tutorial on my next login
+          </label>
+          <p class="settings-note">
+            This demo stores your account and writing in this browser. It does not sync between devices.
+          </p>
+        </section>
+
+        <section class="settings-section danger-zone">
+          <h3>Delete account</h3>
+          <p class="settings-note">
+            Permanently removes this demo account and all its books from this browser. This cannot be undone.
+          </p>
+          <button class="danger-button" id="deleteAccountButton" type="button">Delete my account</button>
+        </section>
+
+        <p class="settings-message" id="settingsMessage" aria-live="polite"></p>
+      </div>
+
+      <div class="dialog-footer">
+        <button class="secondary-button" type="button" data-close="settingsDialog">Cancel</button>
+        <button class="primary-button" type="submit">Save settings</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- First-account tutorial -->
+  <div class="tutorial-overlay hidden" id="tutorialOverlay"
+       role="dialog" aria-modal="true" aria-labelledby="tutorialTitle">
+    <div class="tutorial-card">
+      <div class="tutorial-progress" id="tutorialProgress"></div>
+      <h2 id="tutorialTitle"></h2>
+      <p id="tutorialText"></p>
+      <div class="tutorial-actions">
+        <button class="tutorial-skip" id="tutorialSkip" type="button">Skip tutorial</button>
+        <button class="tutorial-next" id="tutorialNext" type="button">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    const ACCOUNTS_KEY = "ebookie-demo-accounts";
+    const SESSION_KEY = "ebookie-demo-session";
+    const BOOKS_KEY = "ebookie-demo-books";
+    const TUTORIAL_KEY = "ebookie-tutorial-completed";
+
+    function readStorage(key, fallback) {
+      try {
+        return JSON.parse(localStorage.getItem(key)) ?? fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function writeStorage(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    let accounts = readStorage(ACCOUNTS_KEY, []);
+    let allBooks = readStorage(BOOKS_KEY, []);
+    let userBooks = [];
+    let currentUser = null;
+    let authMode = "login";
+    let activeFilter = "all";
+    let tutorialIndex = 0;
+    let editingBookId = null;
+    let activeChapterId = null;
+    let saveTimer = null;
+
+    const tutorialSteps = [
+      {
+        title: "Welcome to your bookshelf",
+        text: "Your E-Bookie space starts empty. Build it with your own books and writing.",
+        target: null
+      },
+      {
+        title: "Your books live here",
+        text: "Books you create appear on this shelf. Search, sort, and filter to find them later.",
+        target: ".dashboard-tools"
+      },
+      {
+        title: "Create a book",
+        text: "Start with the book details. Then use the manuscript editor to write and organize chapters.",
+        target: "#createButton"
+      },
+      {
+        title: "Ready to write",
+        text: "That’s the tour. Your manuscript is saved in this browser as you work.",
+        target: null
+      }
+    ];
+
+    const signupGroups = [
+      "legalNameField", "penNameField", "handleField", "birthFields",
+      "securityQuestionField", "securityAnswerField"
+    ];
+
+    const signupInputIds = [
+      "legalName", "penName", "handle", "age", "birthday",
+      "securityQuestion", "securityAnswer"
+    ];
+
+    function setAuthMode(mode) {
+      authMode = mode;
+      const signup = mode === "signup";
+
+      document.getElementById("loginTab").classList.toggle("active", !signup);
+      document.getElementById("signupTab").classList.toggle("active", signup);
+
+      signupGroups.forEach(id => {
+        document.getElementById(id).classList.toggle("hidden", !signup);
+      });
+
+      signupInputIds.forEach(id => {
+        const input = document.getElementById(id);
+        input.disabled = !signup;
+        input.required = signup;
+      });
+
+      document.getElementById("authEmail").required = true;
+      document.getElementById("authPassword").required = true;
+      document.getElementById("authHeading").textContent =
+        signup ? "Make yourself at home" : "Welcome back";
+      document.getElementById("authSubtitle").textContent =
+        signup ? "Create your reader and author profile." : "Log in to return to your bookshelf.";
+      document.getElementById("authSubmit").textContent =
+        signup ? "Create my account" : "Log in";
+      document.getElementById("authPassword").autocomplete =
+        signup ? "new-password" : "current-password";
+      document.getElementById("authError").textContent = "";
+    }
+
+    function normalizeHandle(value) {
+      return value.trim().replace(/^@/, "").toLowerCase();
+    }
+
+    function getAgeFromBirthday(value) {
+      const dob = new Date(`${value}T00:00:00`);
+      if (Number.isNaN(dob.getTime())) return null;
+
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      if (
+        today.getMonth() < dob.getMonth() ||
+        (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())
+      ) age--;
+
+      return age;
+    }
+
+    function validateSignup(data) {
+      const error = document.getElementById("authError");
+      const birthdayAge = getAgeFromBirthday(data.birthday);
+
+      if (Number(data.age) < 18 || birthdayAge === null || birthdayAge < 18) {
+        error.textContent = "You must be at least 18 years old to sign up.";
+        return false;
+      }
+      if (Number(data.age) !== birthdayAge) {
+        error.textContent = "The age and birthday you entered do not match.";
+        return false;
+      }
+      if (!/^[a-zA-Z0-9_]{3,24}$/.test(data.handle)) {
+        error.textContent = "Handle must be 3–24 characters using letters, numbers, or underscores.";
+        return false;
+      }
+      if (accounts.some(account => account.email === data.email)) {
+        error.textContent = "An account with that email already exists. Try logging in.";
+        return false;
+      }
+      if (accounts.some(account => account.handle === data.handle)) {
+        error.textContent = "That handle is already taken. Please choose another.";
+        return false;
+      }
+      if (accounts.some(account =>
+        account.penName.toLowerCase() === data.penName.toLowerCase()
+      )) {
+        error.textContent = "That author pen name is already in use.";
+        return false;
+      }
+      return true;
+    }
+
+    function showApp(user, startTutorial = false) {
+      currentUser = user;
+      allBooks = readStorage(BOOKS_KEY, []);
+      userBooks = allBooks.filter(book => book.ownerId === user.id);
+
+      document.getElementById("authPage").classList.add("hidden");
+      document.getElementById("appShell").classList.remove("hidden");
+      document.getElementById("bookDetailsScreen").classList.add("hidden");
+      document.getElementById("headerGreeting").textContent = `Hello, ${user.penName}`;
+      document.getElementById("userAvatar").textContent =
+        (user.penName || user.handle || "e").slice(0, 1).toUpperCase();
+
+      const settings = getUserSettings();
+      document.getElementById("sortSelect").value = settings.defaultSort || "newest";
+
+      applyUserSettings();
+      activeFilter = "all";
+      setActiveFilterButtons();
+      renderBooks();
+
+      if (startTutorial && !localStorage.getItem(TUTORIAL_KEY)) {
+        startTutorialFlow();
+      }
+    }
+
+    function logOut() {
+      saveManuscriptIfOpen();
+      localStorage.removeItem(SESSION_KEY);
+      currentUser = null;
+      userBooks = [];
+      document.getElementById("appShell").classList.add("hidden");
+      document.getElementById("bookDetailsScreen").classList.add("hidden");
+      document.getElementById("authPage").classList.remove("hidden");
+      document.getElementById("authForm").reset();
+      setAuthMode("login");
+    }
+
+    function escapeHTML(value = "") {
+      return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;",
+        '"': "&quot;", "'": "&#039;"
+      })[character]);
+    }
+
+    function setActiveFilterButtons() {
+      document.querySelectorAll(".filter-chip").forEach(button => {
+        button.classList.toggle("active", button.dataset.filter === activeFilter);
+      });
+    }
+
+    function renderBooks() {
+      const query = document.getElementById("searchInput").value.trim().toLowerCase();
+      const sortBy = document.getElementById("sortSelect").value;
+
+      let books = userBooks.filter(book => {
+        const matchesFilter =
+          activeFilter === "all" ||
+          (activeFilter === "mine" && book.type === "UGC") ||
+          activeFilter === book.type;
+
+        const searchable =
+          `${book.title} ${book.author} ${book.genre} ${book.description}`.toLowerCase();
+
+        return matchesFilter && searchable.includes(query);
+      });
+
+      if (sortBy === "title") books.sort((a, b) => a.title.localeCompare(b.title));
+      else if (sortBy === "author") books.sort((a, b) => a.author.localeCompare(b.author));
+      else books.sort((a, b) => b.createdAt - a.createdAt);
+
+      document.getElementById("sectionHeading").textContent =
+        activeFilter === "mine" ? "My writing" :
+        activeFilter === "UGC" ? "Original writing" :
+        activeFilter === "Real" ? "Reading journals" : "Your bookshelf";
+
+      document.getElementById("bookCount").textContent =
+        `${books.length} ${books.length === 1 ? "book" : "books"} in your space`;
+
+      const grid = document.getElementById("bookGrid");
+
+      if (!books.length) {
+        const isEmpty = userBooks.length === 0;
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon" aria-hidden="true">e</div>
+            <h3>${isEmpty ? "Your shelf is yours to fill." : "Nothing here yet."}</h3>
+            <p>${isEmpty
+              ? "Create a book, add its details, then write it in the manuscript editor."
+              : "No books match this view. Try another filter or create something new."}</p>
+            <button class="empty-create-button" id="emptyCreateButton" type="button">
+              ＋ Create your first book
+            </button>
+          </div>
+        `;
+        document.getElementById("emptyCreateButton").addEventListener("click", openBookDetailsScreen);
+        return;
+      }
+
+      const palettes = ["", "plum", "ochre", "blue", "rose", "lilac"];
+
+      grid.innerHTML = books.map((book, index) => `
+        <article class="book-card">
+          <div class="book-cover ${palettes[index % palettes.length]}">
+            <span class="book-type">${escapeHTML(book.type === "UGC" ? "Original writing" : "Reading journal")}</span>
+            <h3>${escapeHTML(book.title)}</h3>
+            <span class="cover-author">by ${escapeHTML(book.author)}</span>
+          </div>
+          <div class="book-details">
+            <h4>${escapeHTML(book.title)}</h4>
+            <p>${escapeHTML(book.description || "Your manuscript")}</p>
+            <div class="book-card-bottom">
+              <span class="genre-label">${escapeHTML(book.genre || "Uncategorized")}</span>
+              <span class="card-actions">
+                <button class="read-button" type="button" data-read="${escapeHTML(book.id)}">Read</button>
+                <button class="edit-book-button" type="button" data-edit="${escapeHTML(book.id)}">Edit</button>
+                <button class="delete-book-button" type="button" data-delete-book="${escapeHTML(book.id)}">Delete</button>
+              </span>
+            </div>
+          </div>
+        </article>
+      `).join("");
+
+      grid.querySelectorAll("[data-read]").forEach(button => {
+        button.addEventListener("click", () => openBook(button.dataset.read));
+      });
+
+      grid.querySelectorAll("[data-edit]").forEach(button => {
+        button.addEventListener("click", () => openManuscript(button.dataset.edit));
+      });
+
+      grid.querySelectorAll("[data-delete-book]").forEach(button => {
+        button.addEventListener("click", () => deleteBook(button.dataset.deleteBook));
+      });
+    }
+
+    function openBookDetailsScreen() {
+      document.getElementById("newBookDetailsForm").reset();
+      document.getElementById("appShell").classList.add("hidden");
+      document.getElementById("bookDetailsScreen").classList.remove("hidden");
+      document.getElementById("newBookTitle").focus();
+    }
+
+    function leaveBookDetailsScreen() {
+      document.getElementById("bookDetailsScreen").classList.add("hidden");
+      document.getElementById("appShell").classList.remove("hidden");
+    }
+
+    function deleteBook(bookId) {
+      const book = userBooks.find(item => item.id === bookId);
+      if (!book) return;
+
+      if (!confirm(`Delete "${book.title}" and its entire manuscript? This cannot be undone.`)) {
+        return;
+      }
+
+      allBooks = allBooks.filter(item => item.id !== bookId);
+      userBooks = userBooks.filter(item => item.id !== bookId);
+      writeStorage(BOOKS_KEY, allBooks);
+      renderBooks();
+      showToast("Book and manuscript deleted.");
+    }
+
+    function normalizeBookChapters(book) {
+      if (!Array.isArray(book.chapters) || book.chapters.length === 0) {
+        book.chapters = [{
+          id: `chapter-${Date.now()}`,
+          title: "Chapter 1",
+          content: book.content || ""
+        }];
+      }
+    }
+
+    function openManuscript(bookId) {
+      const book = userBooks.find(item => item.id === bookId);
+      if (!book) return;
+
+      editingBookId = book.id;
+      normalizeBookChapters(book);
+
+      document.getElementById("manuscriptBookTitle").textContent = book.title;
+      document.getElementById("manuscriptBookMeta").textContent =
+        `${book.genre || "Uncategorized"} · by ${book.author}`;
+
+      activeChapterId = book.chapters[0].id;
+      renderChapters();
+      document.getElementById("editorStatus").textContent = "Saved in this browser";
+      document.getElementById("manuscriptDialog").showModal();
+    }
+
+    function getEditingBook() {
+      return userBooks.find(book => book.id === editingBookId) || null;
+    }
+
+    function getActiveChapter() {
+      const book = getEditingBook();
+      return book?.chapters?.find(chapter => chapter.id === activeChapterId) || null;
+    }
+
+    function renderChapters() {
+      const book = getEditingBook();
+      if (!book) return;
+
+      const list = document.getElementById("chapterList");
+      list.innerHTML = book.chapters.map((chapter, index) => `
+        <div class="chapter-row ${chapter.id === activeChapterId ? "active" : ""}">
+          <button class="chapter-select" type="button" data-chapter="${escapeHTML(chapter.id)}">
+            ${escapeHTML(chapter.title || `Chapter ${index + 1}`)}
+          </button>
+          <span class="chapter-actions">
+            <button class="chapter-action" type="button" data-move-up="${escapeHTML(chapter.id)}"
+                    title="Move up" aria-label="Move chapter up">↑</button>
+            <button class="chapter-action" type="button" data-move-down="${escapeHTML(chapter.id)}"
+                    title="Move down" aria-label="Move chapter down">↓</button>
+            <button class="chapter-action" type="button" data-delete-chapter="${escapeHTML(chapter.id)}"
+                    title="Delete chapter" aria-label="Delete chapter">×</button>
+          </span>
+        </div>
+      `).join("");
+
+      list.querySelectorAll("[data-chapter]").forEach(button => {
+        button.addEventListener("click", () => {
+          saveCurrentChapterFields();
+          activeChapterId = button.dataset.chapter;
+          renderChapters();
+        });
+      });
+
+      list.querySelectorAll("[data-move-up]").forEach(button => {
+        button.addEventListener("click", () => moveChapter(button.dataset.moveUp, -1));
+      });
+
+      list.querySelectorAll("[data-move-down]").forEach(button => {
+        button.addEventListener("click", () => moveChapter(button.dataset.moveDown, 1));
+      });
+
+      list.querySelectorAll("[data-delete-chapter]").forEach(button => {
+        button.addEventListener("click", () => deleteChapter(button.dataset.deleteChapter));
+      });
+
+      const active = getActiveChapter();
+      document.getElementById("chapterTitleInput").value = active?.title || "";
+      document.getElementById("chapterContentInput").value = active?.content || "";
+    }
+
+    function saveCurrentChapterFields() {
+      const chapter = getActiveChapter();
+      if (!chapter) return;
+
+      chapter.title = document.getElementById("chapterTitleInput").value.trim();
+      chapter.content = document.getElementById("chapterContentInput").value;
+    }
+
+    function scheduleManuscriptSave() {
+      document.getElementById("editorStatus").textContent = "Unsaved changes…";
+      if (getUserSettings().autosave === "off") return;
+
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveManuscript, 400);
+    }
+
+    function saveManuscript() {
+      clearTimeout(saveTimer);
+      if (!editingBookId) return;
+
+      saveCurrentChapterFields();
+      const book = getEditingBook();
+      if (!book) return;
+
+      book.content = book.chapters.map(chapter => chapter.content).join("\n\n");
+      book.updatedAt = Date.now();
+      writeStorage(BOOKS_KEY, allBooks);
+
+      document.getElementById("editorStatus").textContent =
+        `Saved · ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+      renderBooks();
+    }
+
+    function saveManuscriptIfOpen() {
+      if (editingBookId) saveManuscript();
+    }
+
+    function addChapter() {
+      saveCurrentChapterFields();
+      const book = getEditingBook();
+      if (!book) return;
+
+      const chapter = {
+        id: `chapter-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        title: `Chapter ${book.chapters.length + 1}`,
+        content: ""
+      };
+
+      book.chapters.push(chapter);
+      activeChapterId = chapter.id;
+      writeStorage(BOOKS_KEY, allBooks);
+      renderChapters();
+      saveManuscript();
+      document.getElementById("chapterTitleInput").focus();
+    }
+
+    function moveChapter(chapterId, direction) {
+      saveCurrentChapterFields();
+      const book = getEditingBook();
+      if (!book) return;
+
+      const index = book.chapters.findIndex(chapter => chapter.id === chapterId);
+      const nextIndex = index + direction;
+      if (index < 0 || nextIndex < 0 || nextIndex >= book.chapters.length) return;
+
+      [book.chapters[index], book.chapters[nextIndex]] =
+        [book.chapters[nextIndex], book.chapters[index]];
+
+      writeStorage(BOOKS_KEY, allBooks);
+      renderChapters();
+      saveManuscript();
+    }
+
+    function deleteChapter(chapterId) {
+      const book = getEditingBook();
+      if (!book || book.chapters.length <= 1) {
+        showToast("A book needs at least one chapter.");
+        return;
+      }
+
+      const chapter = book.chapters.find(item => item.id === chapterId);
+      if (getUserSettings().confirmDeleteChapter &&
+          !confirm(`Delete "${chapter?.title || "this chapter"}"?`)) return;
+
+      book.chapters = book.chapters.filter(item => item.id !== chapterId);
+      if (activeChapterId === chapterId) activeChapterId = book.chapters[0].id;
+
+      writeStorage(BOOKS_KEY, allBooks);
+      renderChapters();
+      saveManuscript();
+    }
+
+    function openBook(bookId) {
+      const book = userBooks.find(item => item.id === bookId);
+      if (!book) return;
+
+      document.getElementById("readerTitle").textContent = book.title;
+      document.getElementById("readerByline").textContent =
+        `By ${book.author} · ${book.genre || "Uncategorized"}`;
+
+      const chapters = Array.isArray(book.chapters) && book.chapters.length
+        ? book.chapters
+        : [{ title: "Manuscript", content: book.content || "" }];
+
+      document.getElementById("readerChapters").innerHTML = chapters.map((chapter, index) => `
+        <section>
+          <h3 class="reader-chapter-heading">${escapeHTML(chapter.title || `Chapter ${index + 1}`)}</h3>
+          <div class="reader-text">${escapeHTML(chapter.content || "")}</div>
+        </section>
+      `).join("");
+
+      document.getElementById("readerDialog").showModal();
+    }
+
+    function getUserSettings() {
+      return currentUser?.settings || {
+        theme: "paper",
+        fontSize: "17",
+        defaultSort: "newest",
+        autosave: "on",
+        confirmDeleteChapter: true,
+        showTutorial: false
+      };
+    }
+
+    function openSettings() {
+      if (!currentUser) return;
+
+      const settings = getUserSettings();
+      document.getElementById("settingsDisplayName").value = currentUser.penName || "";
+      document.getElementById("settingsEmail").value = currentUser.email || "";
+      document.getElementById("settingsBio").value = currentUser.bio || "";
+      document.getElementById("settingsTheme").value = settings.theme || "paper";
+      document.getElementById("settingsFontSize").value = settings.fontSize || "17";
+      document.getElementById("settingsDefaultSort").value = settings.defaultSort || "newest";
+      document.getElementById("settingsAutosave").value = settings.autosave || "on";
+      document.getElementById("settingsConfirmDeleteChapter").checked =
+        settings.confirmDeleteChapter !== false;
+      document.getElementById("settingsTutorial").checked = !!settings.showTutorial;
+      document.getElementById("settingsMessage").textContent = "";
+      document.getElementById("settingsDialog").showModal();
+    }
+
+    function applyUserSettings() {
+      const settings = getUserSettings();
+      document.documentElement.style.setProperty(
+        "--manuscript-font-size",
+        `${settings.fontSize || 17}px`
+      );
+      document.getElementById("editorContentInput")?.style.setProperty(
+        "font-size",
+        `${settings.fontSize || 17}px`
+      );
+      document.body.classList.toggle("theme-dark", settings.theme === "dark");
+      document.body.classList.toggle("theme-light", settings.theme === "light");
+      renderBooks();
+    }
+
+    function saveSettings(event) {
+      event.preventDefault();
+      if (!currentUser) return;
+
+      const email = document.getElementById("settingsEmail").value.trim().toLowerCase();
+      const message = document.getElementById("settingsMessage");
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        message.textContent = "Enter a valid email address.";
+        return;
+      }
+
+      if (accounts.some(account => account.id !== currentUser.id && account.email === email)) {
+        message.textContent = "That email is already used by another account.";
+        return;
+      }
+
+      const newPenName = document.getElementById("settingsDisplayName").value.trim();
+      if (!newPenName) {
+        message.textContent = "Your author pen name cannot be blank.";
+        return;
+      }
+
+      if (accounts.some(account =>
+        account.id !== currentUser.id &&
+        account.penName.toLowerCase() === newPenName.toLowerCase()
+      )) {
+        message.textContent = "That author pen name is already in use.";
+        return;
+      }
+
+      currentUser.penName = newPenName;
+      currentUser.email = email;
+      currentUser.bio = document.getElementById("settingsBio").value.trim();
+      currentUser.settings = {
+        theme: document.getElementById("settingsTheme").value,
+        fontSize: document.getElementById("settingsFontSize").value,
+        defaultSort: document.getElementById("settingsDefaultSort").value,
+        autosave: document.getElementById("settingsAutosave").value,
+        confirmDeleteChapter:
+          document.getElementById("settingsConfirmDeleteChapter").checked,
+        showTutorial: document.getElementById("settingsTutorial").checked
+      };
+
+      accounts = accounts.map(account =>
+        account.id === currentUser.id ? currentUser : account
+      );
+      writeStorage(ACCOUNTS_KEY, accounts);
+
+      userBooks.forEach(book => {
+        book.author = currentUser.penName;
+      });
+      writeStorage(BOOKS_KEY, allBooks);
+
+      document.getElementById("headerGreeting").textContent = `Hello, ${currentUser.penName}`;
+      document.getElementById("userAvatar").textContent =
+        currentUser.penName.slice(0, 1).toUpperCase();
+
+      if (currentUser.settings.showTutorial) localStorage.removeItem(TUTORIAL_KEY);
+      else localStorage.setItem(TUTORIAL_KEY, "true");
+
+      applyUserSettings();
+      document.getElementById("settingsDialog").close();
+      showToast("Settings saved.");
+    }
+
+    function deleteCurrentAccount() {
+      if (!currentUser) return;
+
+      if (!confirm("Permanently delete this account and all its books from this browser? This cannot be undone.")) {
+        return;
+      }
+
+      const accountId = currentUser.id;
+      accounts = accounts.filter(account => account.id !== accountId);
+      allBooks = allBooks.filter(book => book.ownerId !== accountId);
+
+      writeStorage(ACCOUNTS_KEY, accounts);
+      writeStorage(BOOKS_KEY, allBooks);
+      localStorage.removeItem(SESSION_KEY);
+
+      document.getElementById("settingsDialog").close();
+      document.getElementById("authForm").reset();
+      currentUser = null;
+      userBooks = [];
+
+      document.getElementById("appShell").classList.add("hidden");
+      document.getElementById("bookDetailsScreen").classList.add("hidden");
+      document.getElementById("authPage").classList.remove("hidden");
+      setAuthMode("login");
+    }
+
+    function startTutorialFlow() {
+      tutorialIndex = 0;
+      document.getElementById("tutorialOverlay").classList.remove("hidden");
+      renderTutorialStep();
+    }
+
+    function renderTutorialStep() {
+      document.querySelectorAll(".tutorial-focus").forEach(element => {
+        element.classList.remove("tutorial-focus");
+      });
+
+      const step = tutorialSteps[tutorialIndex];
+      document.getElementById("tutorialProgress").textContent =
+        `STEP ${tutorialIndex + 1} OF ${tutorialSteps.length}`;
+      document.getElementById("tutorialTitle").textContent = step.title;
+      document.getElementById("tutorialText").textContent = step.text;
+      document.getElementById("tutorialNext").textContent =
+        tutorialIndex === tutorialSteps.length - 1 ? "Finish" : "Next";
+
+      if (step.target) {
+        const target = document.querySelector(step.target);
+        target.classList.add("tutorial-focus");
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+
+    function finishTutorial() {
+      document.querySelectorAll(".tutorial-focus").forEach(element => {
+        element.classList.remove("tutorial-focus");
+      });
+      document.getElementById("tutorialOverlay").classList.add("hidden");
+      localStorage.setItem(TUTORIAL_KEY, "true");
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2300);
+    }
+
+    // Login and signup
+    document.getElementById("loginTab").addEventListener("click", () => setAuthMode("login"));
+    document.getElementById("signupTab").addEventListener("click", () => setAuthMode("signup"));
+
+    document.getElementById("authForm").addEventListener("submit", event => {
+      event.preventDefault();
+
+      const error = document.getElementById("authError");
+      error.textContent = "";
+
+      const emailInput = document.getElementById("authEmail");
+      const email = emailInput.value.trim().toLowerCase();
+      const password = document.getElementById("authPassword").value;
+
+      if (!email || !emailInput.checkValidity()) {
+        error.textContent = "Enter a valid email address.";
+        emailInput.focus();
+        return;
+      }
+
+      if (password.length < 6) {
+        error.textContent = "Password must be at least 6 characters.";
+        document.getElementById("authPassword").focus();
+        return;
+      }
+
+      if (authMode === "signup") {
+        const data = {
+          legalName: document.getElementById("legalName").value.trim(),
+          penName: document.getElementById("penName").value.trim(),
+          email,
+          handle: normalizeHandle(document.getElementById("handle").value),
+          age: document.getElementById("age").value,
+          birthday: document.getElementById("birthday").value,
+          password,
+          securityQuestion: document.getElementById("securityQuestion").value,
+          securityAnswer: document.getElementById("securityAnswer").value.trim()
+        };
+
+        if (
+          !data.legalName || !data.penName || !data.handle || !data.age ||
+          !data.birthday || !data.securityQuestion || !data.securityAnswer
+        ) {
+          error.textContent = "Please complete every signup field.";
+          return;
+        }
+
+        if (!validateSignup(data)) return;
+
+        const account = {
+          id: `account-${Date.now()}`,
+          ...data,
+          settings: {
+            theme: "paper",
+            fontSize: "17",
+            defaultSort: "newest",
+            autosave: "on",
+            confirmDeleteChapter: true,
+            showTutorial: false
+          }
+        };
+
+        accounts.push(account);
+        writeStorage(ACCOUNTS_KEY, accounts);
+        writeStorage(SESSION_KEY, { id: account.id });
+        showApp(account, true);
+        return;
+      }
+
+      const account = accounts.find(item =>
+        item.email === email && item.password === password
+      );
+
+      if (!account) {
+        error.textContent = "That email and password don't match an account.";
+        return;
+      }
+
+      writeStorage(SESSION_KEY, { id: account.id });
+      showApp(account, !!account.settings?.showTutorial);
+    });
+
+    // Bookshelf actions
+    document.getElementById("createButton").addEventListener("click", openBookDetailsScreen);
+    document.getElementById("logoutButton").addEventListener("click", logOut);
+    document.getElementById("settingsButton").addEventListener("click", openSettings);
+    document.getElementById("searchInput").addEventListener("input", renderBooks);
+    document.getElementById("sortSelect").addEventListener("change", renderBooks);
+
+    document.querySelectorAll(".filter-chip").forEach(button => {
+      button.addEventListener("click", () => {
+        activeFilter = button.dataset.filter;
+        setActiveFilterButtons();
+        renderBooks();
+      });
+    });
+
+    document.getElementById("cancelBookDetails")
+      .addEventListener("click", leaveBookDetailsScreen);
+    document.getElementById("cancelBookDetailsBottom")
+      .addEventListener("click", leaveBookDetailsScreen);
+
+    // Create a book from its dedicated details screen, then open manuscript.
+    document.getElementById("newBookDetailsForm").addEventListener("submit", event => {
+      event.preventDefault();
+      if (!currentUser) return;
+
+      const form = new FormData(event.currentTarget);
+      const now = Date.now();
+
+      const book = {
+        id: `book-${now}`,
+        ownerId: currentUser.id,
+        title: String(form.get("title")).trim(),
+        genre: String(form.get("genre")).trim() || "Uncategorized",
+        type: form.get("type"),
+        description: String(form.get("description")).trim(),
+        notes: String(form.get("notes")).trim(),
+        author: currentUser.penName,
+        chapters: [{
+          id: `chapter-${now}`,
+          title: "Chapter 1",
+          content: ""
+        }],
+        content: "",
+        createdAt: now,
+        updatedAt: now
+      };
+
+      allBooks.push(book);
+      userBooks.push(book);
+      writeStorage(BOOKS_KEY, allBooks);
+
+      document.getElementById("bookDetailsScreen").classList.add("hidden");
+      document.getElementById("appShell").classList.remove("hidden");
+      renderBooks();
+      openManuscript(book.id);
+    });
+
+    // Manuscript editor
+    document.getElementById("addChapterButton").addEventListener("click", addChapter);
+
+    document.getElementById("chapterTitleInput").addEventListener("input", () => {
+      const chapter = getActiveChapter();
+      if (chapter) {
+        chapter.title = document.getElementById("chapterTitleInput").value.trim();
+        const activeButton = document.querySelector(".chapter-row.active .chapter-select");
+        if (activeButton) {
+          const index = getEditingBook().chapters.indexOf(chapter);
+          activeButton.textContent = chapter.title || `Chapter ${index + 1}`;
+        }
+      }
+      scheduleManuscriptSave();
+    });
+
+    document.getElementById("chapterContentInput").addEventListener(
+      "input",
+      scheduleManuscriptSave
+    );
+
+    document.getElementById("saveManuscriptButton").addEventListener("click", () => {
+      saveManuscript();
+      showToast("Manuscript saved.");
+    });
+
+    document.getElementById("closeManuscriptButton").addEventListener("click", () => {
+      saveManuscript();
+      document.getElementById("manuscriptDialog").close();
+      editingBookId = null;
+    });
+
+    document.getElementById("manuscriptDialog").addEventListener("close", () => {
+      if (editingBookId) saveManuscript();
+      editingBookId = null;
+    });
+
+    // Settings
+    document.getElementById("settingsForm").addEventListener("submit", saveSettings);
+    document.getElementById("deleteAccountButton")
+      .addEventListener("click", deleteCurrentAccount);
+
+    // Dialog close buttons
+    document.querySelectorAll("[data-close]").forEach(button => {
+      button.addEventListener("click", () => {
+        document.getElementById(button.dataset.close).close();
+      });
+    });
+
+    // Tutorial
+    document.getElementById("tutorialNext").addEventListener("click", () => {
+      if (tutorialIndex === tutorialSteps.length - 1) finishTutorial();
+      else {
+        tutorialIndex++;
+        renderTutorialStep();
+      }
+    });
+
+    document.getElementById("tutorialSkip").addEventListener("click", finishTutorial);
+
+    // Initialize login mode and restore an existing local demo session.
+    setAuthMode("login");
+
+    const savedSession = readStorage(SESSION_KEY, null);
+    if (savedSession) {
+      const account = accounts.find(item => item.id === savedSession.id);
+      if (account) showApp(account);
+    }
+  </script>
+</body>
+</html>
